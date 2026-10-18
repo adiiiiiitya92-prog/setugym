@@ -1,0 +1,89 @@
+{
+  "expo": {
+    "name": "SetuGym",
+    "slug": "gympro",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "setugym",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "backgroundColor": "#0F0F1A",
+      "package": "com.setusolution.gymapp",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_AUDIO",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow SetuGym to access your camera to scan QR codes for member attendance."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysPermission": "Allow SetuGym to check if you are within the gym boundaries to log attendance.",
+          "locationWhenInUsePermission": "Allow SetuGym to check if you are within the gym boundaries to log attendance."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow SetuGym to save QR code images to your photo gallery.",
+          "savePhotosPermission": "Allow SetuGym to save QR code images to your photo gallery.",
+          "isAccessMediaLocationEnabled": true,
+          "granularPermissions": ["photo"]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow SetuGym to access your photos to select gym logos and upload progress photos."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow SetuGym to use biometrics to secure and fast-login your gym account."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#6C47FF"
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "78315907-3249-4215-b35b-70bf1df5e014"
+      }
+    }
+  }
+}

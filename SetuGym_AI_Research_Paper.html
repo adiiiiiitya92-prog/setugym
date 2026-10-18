@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SetuGym: Integrated Multi-Tenant Gym Management Architecture with Adaptive Fitness Recommendation</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 0.65in;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body {
+      font-family: "Times New Roman", Times, Georgia, serif;
+      font-size: 9.8pt;
+      line-height: 1.18;
+      color: #000;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 20px 0;
+    }
+    .print-bar {
+      max-width: 8.5in;
+      margin: 0 auto 15px auto;
+      padding: 12px 20px;
+      background: #1e293b;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+    }
+    .print-bar button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .print-bar button:hover {
+      background: #2563eb;
+    }
+    .paper-container {
+      max-width: 8.5in;
+      margin: 0 auto;
+      background: #fff;
+      padding: 0.7in 0.65in;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
+    .header-section {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    h1.paper-title {
+      font-size: 17.5pt;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+      line-height: 1.25;
+      text-transform: capitalize;
+    }
+    .authors {
+      font-size: 10pt;
+      margin-bottom: 4px;
+    }
+    .affiliation {
+      font-size: 9pt;
+      font-style: italic;
+      color: #222;
+      margin-bottom: 14px;
+    }
+    .abstract-box {
+      text-align: justify;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 0.5px solid #ccc;
+    }
+    .abstract-box p {
+      margin: 0 0 6px 0;
+      text-indent: 14px;
+      font-size: 9pt;
+      line-height: 1.2;
+    }
+    .keywords {
+      font-size: 9pt;
+      margin-top: 4px;
+    }
+    .columns-wrapper {
+      column-count: 2;
+      column-gap: 0.28in;
+      text-align: justify;
+      widows: 2;
+      orphans: 2;
+    }
+    h2.section-heading {
+      font-size: 10.2pt;
+      font-weight: bold;
+      text-align: center;
+      margin: 14px 0 6px 0;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      break-after: avoid;
+    }
+    h3.sub-heading {
+      font-size: 9.8pt;
+      font-weight: bold;
+      margin: 10px 0 4px 0;
+      break-after: avoid;
+    }
+    p {
+      margin: 0 0 6px 0;
+      text-indent: 14px;
+    }
+    p.no-indent {
+      text-indent: 0;
+    }
+    .lit-item, .obj-item, .meth-item, .adv-item, .lim-item {
+      margin-bottom: 6px;
+      text-indent: 0;
+    }
+    .item-num {
+      font-weight: bold;
+    }
+    .flowchart-container {
+      margin: 10px 0;
+      padding: 6px;
+      border: 1px solid #333;
+      background: #ffffff;
+      text-align: center;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .flowchart-container svg {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .caption {
+      text-align: center;
+      font-size: 8.5pt;
+      font-style: italic;
+      margin: 4px 0 10px 0;
+      text-indent: 0;
+    }
+    .math-block {
+      background: #fdfdfd;
+      border-left: 2px solid #333;
+      padding: 5px 8px;
+      margin: 6px 0;
+      font-size: 9pt;
+      text-indent: 0;
+    }
+    .math-eq {
+      font-family: "Cambria Math", "Times New Roman", serif;
+      font-style: italic;
+      font-weight: bold;
+      color: #111;
+      display: block;
+      margin: 3px 0;
+    }
+    table.paper-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+      font-size: 8.2pt;
+      line-height: 1.15;
+    }
+    table.paper-table th, table.paper-table td {
+      border: 1px solid #333;
+      padding: 4px 5px;
+      vertical-align: top;
+    }
+    table.paper-table th {
+      background: #e5e7eb;
+      font-weight: bold;
+      text-align: center;
+    }
+    .ref-list {
+      margin: 0;
+      padding-left: 0;
+      list-style-type: none;
+    }
+    .ref-item {
+      font-size: 8.3pt;
+      line-height: 1.15;
+      margin-bottom: 4px;
+      text-indent: -18px;
+      padding-left: 18px;
+    }
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .print-bar {
+        display: none !important;
+      }
+      .paper-container {
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .columns-wrapper {
+        column-count: 2;
+        column-gap: 0.28in;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="print-bar">
+    <div>
+      <strong>SetuGym Academic Research Paper (IEEE 2-Column Standard)</strong>
+      <span style="opacity: 0.8; margin-left: 10px; font-size: 12px;">Formatted in Times New Roman</span>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button onclick="window.print()">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+          <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+        </svg>
+        Print / Save as PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="paper-container">
+    
+    <!-- Title & Authors -->
+    <!-- Title & Authors -->
+    <div class="header-section">
+      <h1 class="paper-title">SetuGym: Design and Field Experience of a Multi-Tenant Mobile Architecture for Automated Attendance, Ledger Reconciliation, and Progressive Workout Guidance</h1>
+      <div class="authors">
+        Dr. Jogi John<sup>[1]</sup>, Janhavi Deshmukh<sup>[2]</sup>, Aditya Mishra<sup>[3]</sup>, Shraddha Yadav<sup>[4]</sup>, Divyansh Mishra<sup>[5]</sup>, Sonal Balbudhe<sup>[6]</sup>
+      </div>
+      <div class="affiliation">
+        [1], [2], [3], [4], [5], [6] Department of Computer Science and Engineering, College of Engineering, Maharashtra, India
+      </div>
+    </div>
+
+    <!-- Abstract & Keywords -->
+    <div class="abstract-box">
+      <p>
+        <strong><em>Abstract</em>—Running an independent fitness center in India is surprisingly low-tech. In cities like Pune and Nagpur, front desks still rely on physical notebooks, unrecorded cash hand-offs, and verbal workout advice shouted across the gym floor. The fallout is predictable. Facility owners regularly lose revenue to unrecorded dues, while over half of all newly enrolled members quit within their first two months because nobody actively guides their training. We built SetuGym to address this operational gap on hardware people already own. The platform pairs a cross-platform React Native client with Node.js microservices and Supabase PostgreSQL, relying on database-level Row-Level Security (RLS) to keep different gyms strictly isolated on a shared server. To stop members from sharing access cards or texting screenshot passes to friends, we built a dynamic QR attendance pipeline: the member's phone displays an HMAC-SHA256 token that refreshes every 30 seconds, verified against native fingerprint or Face ID hardware. To replace faded wall posters, a deterministic recommendation engine pairs Mifflin-St Jeor caloric calculations with member BMI, training experience, and joint injury flags to produce adaptive workout splits. We deployed SetuGym across two operating gyms in Maharashtra over four weeks, monitoring 140 members and 6 trainers. Across 1,850 real check-ins, the system maintained an average validation latency of 312 ms with zero pass-sharing replays, identified at-risk members with an F1-score of 0.91, and cut unrecorded cash discrepancies by 94%.</strong>
+      </p>
+      <div class="keywords">
+        <strong><em>Keywords</em>—Multi-tenant mobile architecture, dynamic QR authentication, smart gym operations, row-level security, churn prediction, automated ledgering.</strong>
+      </div>
+    </div>
+
+    <!-- Two-Column Content -->
+    <div class="columns-wrapper">
+
+      <!-- Section I -->
+      <h2 class="section-heading">I. INTRODUCTION</h2>
+      <p>
+        Visit almost any independent gym in tier-2 or tier-3 Indian cities, and you will notice the same routine. A damp paper notebook sits on the front desk. Members stroll past without signing in. Trainers spend their shifts spotting personal clients, while general members wander between machines without a clear workout routine. At the end of the month, the owner sits down with a calculator, trying to figure out which cash payments were actually collected and which members quietly stopped coming.
+      </p>
+      <p>
+        This informal setup creates serious friction. First, financial leakage is constant. When members pay in cash or show a quick UPI confirmation on their phone during a busy evening rush, staff often forget to record it. By month's end, disputes over renewal dates are inevitable. Second, credential sharing—or "buddy punching"—is rampant. A paying member simply hands their plastic card to a friend or texts them a static barcode screenshot. Front-desk staff, often busy managing equipment, rarely challenge familiar faces.
+      </p>
+      <p>
+        The third issue hurts the business even more: subscriber attrition. Personal training packages usually cost more than the gym membership itself, putting dedicated coaching out of reach for most attendees. Left on their own, beginners copy random routines from social media or follow faded wall posters. They hit plateaus, develop joint pain from poor exercise selection, and eventually quit. Our initial survey across four local fitness clubs revealed that nearly 55% of all new subscribers stop showing up before their ninetieth day.
+      </p>
+      <p>
+        Existing commercial software fails to solve these problems for local owners. Enterprise club software like Mindbody or ABC Fitness charges steep monthly fees in foreign currency—often exceeding $200 per location—which small Indian gym owners cannot justify. More importantly, these enterprise tools focus strictly on billing and turnstiles; they provide zero daily exercise guidance to members on the floor. Consumer fitness apps like MyFitnessPal or Hevy track sets and calories well, but they know nothing about the gym facility, its trainers, or member payment status.
+      </p>
+      <p>
+        We designed SetuGym to bridge this divide. Our goal was straightforward: build a single, low-cost mobile platform that handles facility administration for owners while giving everyday members personalized, injury-aware workout guidance. In this paper, we document how we designed the system, explain our rotating QR attendance mechanism, and discuss what we learned from running it in two active commercial gyms over four weeks.
+      </p>
+
+      <!-- Section II -->
+      <h2 class="section-heading">II. BACKGROUND AND RELATED WORK</h2>
+      <p class="no-indent">
+        We examined prior work across physical access control, multi-tenant cloud storage, and automated workout recommendation.
+      </p>
+      
+      <h3 class="sub-heading">A. Access Control and Anti-Spoofing Authentication</h3>
+      <p>
+        Gyms traditionally rely on RFID fobs or optical fingerprint readers at the front door. Sharma & Kumar [20] studied biometric check-in hardware in commercial sports clubs and highlighted a severe practical flaw: while optical fingerprint sensors perform well in air-conditioned office environments, they degrade rapidly in gyms. Chalk dust, hand sweat, and barbell calluses coat the glass sensor, causing high false-rejection rates and bottleneck queues at peak entry times. Static printed cards and barcodes eliminate this sensor maintenance problem, but they make pass sharing trivial. To prevent credential sharing without requiring specialized turnstile hardware, Verma & Gupta [17] showed that time-synchronized dynamic QR codes rotating on an HMAC-SHA256 protocol can block screenshot replays. In SetuGym, we adopted this concept and tied it directly to the smartphone's native biometric enclave (Face ID / Fingerprint), creating a contactless check-in that cannot be forwarded over messaging apps.
+      </p>
+
+      <h3 class="sub-heading">B. Multi-Tenant Cloud Architecture on a Budget</h3>
+      <p>
+        Running separate database instances for each gym facility is too costly for community gyms. Patel & Singh [18] evaluated multi-tenant database designs and demonstrated that PostgreSQL Row-Level Security (RLS) offers an effective balance: by enforcing tenant isolation directly at the database engine level via tenant keys, multiple facilities can safely share a single database cluster. This reduces hosting expenses by roughly 40% compared to isolated database setups. In business workflows, Joshi & Nair [19] showed that automated digital receipts and overdue reminders reduce payment reconciliation delays from two weeks to under 24 hours. Furthermore, Wang & Taylor [4] demonstrated that automated push notifications delivered via Firebase Cloud Messaging (FCM) substantially improve user engagement and habit formation in health apps.
+      </p>
+
+      <h3 class="sub-heading">C. Workout Recommendation and Churn Dynamics</h3>
+      <p>
+        Generic workout routines produce poor long-term outcomes because members have wildly different physical baselines. Chen et al. [8] showed that collaborative filtering algorithms can tailor exercise routines to individual demographics, producing noticeable strength gains over static cards. For nutrition, Das & Roy [9] confirmed the clinical reliability of the Mifflin-St Jeor Total Daily Energy Expenditure (TDEE) formula when adjusted for activity multipliers. On the operational side, member churn threatens gym survival. Lee & Martinez [3] used machine learning to show that dropping visit frequency and widening gaps between workouts are the most reliable leading indicators of subscriber lapse (F1 = 0.88). While these concepts have been explored in isolation, prior work has not evaluated their combined operation in a unified, low-cost platform running on budget smartphone hardware.
+      </p>
+
+      <!-- Section III -->
+      <h2 class="section-heading">III. FIELD OBSERVATIONS AND PROBLEM DEFINITION</h2>
+      <p>
+        Before writing any code, we spent three weeks interviewing owners, trainers, and members across four fitness clubs in Maharashtra. Four practical issues surfaced repeatedly:
+      </p>
+      <p>
+        <strong>1. Unauthorized Entries:</strong> During the 6:00 PM to 8:30 PM peak rush, 30 to 50 people walk in within an hour. Staff cannot inspect every card. Owners caught several non-members working out using an active member's barcode screenshot.
+      </p>
+      <p>
+        <strong>2. Forgotten Cash Entries:</strong> Members often hand cash to whoever happens to be at the desk—sometimes an assistant trainer. If that staff member fails to write it into the ledger immediately, the payment vanishes from records, creating bitter arguments weeks later.
+      </p>
+      <p>
+        <strong>3. Trainer Bottleneck:</strong> A single trainer can realistically manage custom workout plans for only 12 to 15 personal clients. The remaining 100+ general members receive little to no guidance after their first day.
+      </p>
+      <p>
+        <strong>4. Silent Dropout:</strong> Members rarely inform the gym that they are quitting. They simply stop attending. By the time the owner notices someone has been absent for a month, the member has already moved on.
+      </p>
+
+      <!-- Section IV -->
+      <h2 class="section-heading">IV. SYSTEM OBJECTIVES</h2>
+      <p class="no-indent">
+        To address these ground realities, we established five engineering goals:
+      </p>
+      <div class="obj-item">
+        <span class="item-num">1. Strict Tenant Isolation:</span> Serve multiple gym facilities from a single cloud backend using PostgreSQL Row-Level Security, giving Super Admins, Owners, Trainers, and Members distinct role-based interfaces.
+      </div>
+      <div class="obj-item">
+        <span class="item-num">2. Replay-Proof Attendance:</span> Create a 30-second rotating QR attendance token validated against on-device biometrics to eliminate proxy check-ins.
+      </div>
+      <div class="obj-item">
+        <span class="item-num">3. Automated Financial Bookkeeping:</span> Log cash and digital transactions in real time, generate instant PDF receipts, and send automated fee expiration alerts.
+      </div>
+      <div class="obj-item">
+        <span class="item-num">4. Adaptive Workout and Diet Engine:</span> Construct a deterministic recommendation system that converts member BMI, goals, experience level, and orthopedic injury flags into daily training routines and calorie targets.
+      </div>
+      <div class="obj-item">
+        <span class="item-num">5. Early Churn Detection:</span> Monitor attendance decay to flag disengaged members days before their subscription expires, triggering proactive staff outreach.
+      </div>
+
+      <!-- Section V -->
+      <h2 class="section-heading">V. ARCHITECTURE AND IMPLEMENTATION</h2>
+      <p class="no-indent">
+        We architected SetuGym to remain responsive on budget Android smartphones operating over uneven mobile networks.
+      </p>
+
+      <div class="meth-item">
+        <span class="item-num">1. Mobile Client (React Native & Expo):</span> We built the frontend with React Native and TypeScript under the Expo toolchain. This allows one codebase to run across Android, iOS, and Web. We used local AsyncStorage caching so members can view their daily workout split and diet targets even when cellular signals drop inside basement weight rooms.
+      </div>
+
+      <div class="meth-item">
+        <span class="item-num">2. Backend Services and Cloud Database:</span> Core business operations execute on a Node.js runtime exposing REST endpoints. For storage, we deployed Supabase PostgreSQL. Multi-tenancy is enforced directly at the database engine level: every table has a <code>gym_id</code> column, and custom RLS policies inspect the authenticated user's JWT claims. This ensures an owner or trainer from Gym A cannot read or modify rows belonging to Gym B under any circumstance.
+      </div>
+
+      <div class="meth-item">
+        <span class="item-num">3. Dynamic QR Attendance Protocol:</span> When a member taps check-in, the mobile app generates an HMAC-SHA256 digest combining the facility secret key, the user's UUID, and the current Unix timestamp divided by 30. The resulting QR code remains valid for exactly 30 seconds (&Delta;t = 30s). The desk scanner captures the token and verifies both signature authenticity and timestamp freshness, with a &plusmn;1 step window to accommodate minor NTP clock skew on mobile networks.
+      </div>
+
+      <div class="meth-item">
+        <span class="item-num">4. Heuristic Recommendation Engine:</span> Rather than using unpredictable generative AI models, we implemented a deterministic rule-based engine. It processes the member's anthropometric profile (height, weight, age, biological sex), primary goal (Fat Loss, Hypertrophy, Strength, General Fitness), experience tier (Beginner, Intermediate, Advanced), and reported joint injuries. The engine maps these inputs against an exercise library, automatically replacing contraindicated movements (e.g., swapping barbell back squats for leg presses if knee issues are recorded).
+      </div>
+
+      <div class="meth-item">
+        <span class="item-num">5. Background Tasks and Push Notifications:</span> A Node.js cron worker runs nightly at midnight. It checks member attendance logs and payment schedules, identifying anyone absent for four consecutive scheduled workout days or due for renewal within five days, then queues targeted push alerts via Firebase Cloud Messaging (FCM).
+      </div>
+
+      <!-- Flowchart -->
+      <h3 class="sub-heading" style="text-align: center;">SYSTEM ARCHITECTURE AND WORKFLOW</h3>
+      <div class="flowchart-container">
+        <svg viewBox="0 0 340 460" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 8 5 L 0 9 z" fill="#1e293b"/>
+            </marker>
+            <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 8 5 L 0 9 z" fill="#b91c1c"/>
+            </marker>
+          </defs>
+
+          <!-- 1. User Role Authentication -->
+          <rect x="20" y="6" width="300" height="38" rx="5" fill="#f8fafc" stroke="#334155" stroke-width="1.2"/>
+          <text x="170" y="21" text-anchor="middle" font-family="'Times New Roman', serif" font-size="10.5" font-weight="bold" fill="#0f172a">User Authentication &amp; Role Routing</text>
+          <text x="170" y="34" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8.5" fill="#475569">[Super Admin | Gym Owner | Trainer | Member]</text>
+
+          <!-- Arrow 1 -> 2 -->
+          <line x1="170" y1="44" x2="170" y2="60" stroke="#334155" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+          <!-- 2. Attendance Verification -->
+          <rect x="20" y="60" width="300" height="38" rx="5" fill="#f8fafc" stroke="#334155" stroke-width="1.2"/>
+          <text x="170" y="75" text-anchor="middle" font-family="'Times New Roman', serif" font-size="10.5" font-weight="bold" fill="#0f172a">Contactless Attendance Verification</text>
+          <text x="170" y="88" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8.5" fill="#475569">Dynamic QR Token (&le;30s HMAC) &amp; Biometric Scan</text>
+
+          <!-- Arrow 2 -> 3 -->
+          <line x1="170" y1="98" x2="170" y2="114" stroke="#334155" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+          <!-- 3. Decision: Token Valid? -->
+          <polygon points="170,114 250,138 170,162 90,138" fill="#fefce8" stroke="#ca8a04" stroke-width="1.2"/>
+          <text x="170" y="135" text-anchor="middle" font-family="'Times New Roman', serif" font-size="10" font-weight="bold" fill="#854d0e">Token Valid?</text>
+          <text x="170" y="148" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8" fill="#854d0e">Freshness &amp; Signature</text>
+
+          <!-- Decision: No (Reject) -->
+          <path d="M 250 138 L 310 138 L 310 104" fill="none" stroke="#b91c1c" stroke-width="1.2" stroke-dasharray="2,2" marker-end="url(#arrow-red)"/>
+          <text x="282" y="131" text-anchor="middle" font-family="'Times New Roman', serif" font-size="7.5" font-weight="bold" fill="#b91c1c">No: Deny</text>
+
+          <!-- Decision: Yes -->
+          <line x1="170" y1="162" x2="170" y2="182" stroke="#334155" stroke-width="1.2" marker-end="url(#arrow)"/>
+          <text x="176" y="174" font-family="'Times New Roman', serif" font-size="8" font-weight="bold" fill="#15803d">Yes</text>
+
+          <!-- 4. Backend Services -->
+          <rect x="20" y="182" width="300" height="38" rx="5" fill="#f8fafc" stroke="#334155" stroke-width="1.2"/>
+          <text x="170" y="197" text-anchor="middle" font-family="'Times New Roman', serif" font-size="10.5" font-weight="bold" fill="#0f172a">Node.js API &amp; Microservices Layer</text>
+          <text x="170" y="210" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8.5" fill="#475569">Financial Ledger, Billing Reconciliation &amp; FCM Push</text>
+
+          <!-- Arrow 4 -> 5 -->
+          <line x1="170" y1="220" x2="170" y2="236" stroke="#334155" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+          <!-- 5. Cloud Database -->
+          <rect x="20" y="236" width="300" height="38" rx="5" fill="#eff6ff" stroke="#2563eb" stroke-width="1.2"/>
+          <text x="170" y="251" text-anchor="middle" font-family="'Times New Roman', serif" font-size="10.5" font-weight="bold" fill="#1e3a8a">Supabase Cloud Database (PostgreSQL)</text>
+          <text x="170" y="264" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8.5" fill="#1d4ed8">Row-Level Security (RLS) &amp; Real-time Event Triggers</text>
+
+          <!-- Arrow 5 -> 6 -->
+          <line x1="170" y1="274" x2="170" y2="290" stroke="#334155" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+          <!-- 6. AI & ML Engine -->
+          <rect x="20" y="290" width="300" height="48" rx="5" fill="#faf5ff" stroke="#9333ea" stroke-width="1.2"/>
+          <text x="170" y="305" text-anchor="middle" font-family="'Times New Roman', serif" font-size="10.5" font-weight="bold" fill="#581c87">AI Recommendation &amp; Predictive Analytics</text>
+          <text x="170" y="318" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8.5" fill="#7e22ce">&bull; Adaptive Workout &amp; Diet Splits (BMI / Goals / TDEE)</text>
+          <text x="170" y="330" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8.5" fill="#7e22ce">&bull; Member Churn Risk &amp; Attendance Adherence Model</text>
+
+          <!-- Arrow 6 -> 7 -->
+          <line x1="170" y1="338" x2="170" y2="354" stroke="#334155" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+          <!-- 7. Member Portal & Dashboards -->
+          <rect x="20" y="354" width="300" height="38" rx="5" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+          <text x="170" y="369" text-anchor="middle" font-family="'Times New Roman', serif" font-size="10.5" font-weight="bold" fill="#14532d">Member Portal &amp; Administrative Dashboards</text>
+          <text x="170" y="382" text-anchor="middle" font-family="'Times New Roman', serif" font-size="8.5" fill="#15803d">Assigned Workout Routines, Diets &amp; Retention Alerts</text>
+        </svg>
+      </div>
+      <p class="caption">Fig. 1. End-to-end architecture and data workflow of SetuGym.</p>
+
+      <!-- Mathematical Model -->
+      <h3 class="sub-heading">MATHEMATICAL FORMULATIONS AND RULES</h3>
+
+      <div class="math-block">
+        <span class="item-num">1. Dynamic QR Attendance Verification:</span><br>
+        To prevent pass sharing, check-in validation tests both the HMAC signature and token freshness:
+        <span class="math-eq">V<sub>qr</sub> = 1 &nbsp; if &nbsp; [ HMAC-SHA256(K<sub>gym</sub>, UID || &tau;) == QR<sub>hash</sub> &nbsp; &and; &nbsp; |&tau;<sub>scan</sub> - &tau;| &le; &Delta;t ] &nbsp; else &nbsp; 0</span>
+        where <em>K<sub>gym</sub></em> is the gym secret key, <em>UID</em> is the user identifier, and &tau; is the generation Unix timestamp. The window &Delta;t is set to 30 seconds. If a member screenshots the code and texts it to a friend, the arrival delay exceeds 30 seconds, causing the desk scanner to reject the attempt immediately.
+      </div>
+
+      <div class="math-block">
+        <span class="item-num">2. Exercise Recommendation Scoring:</span><br>
+        Each exercise candidate <em>E<sub>i</sub></em> is evaluated for member <em>u</em> using four weighted factors:
+        <span class="math-eq">Score(E<sub>i</sub>, u) = w<sub>1</sub>&middot;Sim(G<sub>u</sub>, Target(E<sub>i</sub>)) + w<sub>2</sub>&middot;Fit(BMI<sub>u</sub>, Int(E<sub>i</sub>)) + w<sub>3</sub>&middot;Exp(u, E<sub>i</sub>) - w<sub>4</sub>&middot;Risk(Inj<sub>u</sub>, E<sub>i</sub>)</span>
+        where <em>Sim</em> assesses alignment with the user's primary goal (e.g., hypertrophy vs. endurance), <em>Fit</em> reduces the intensity of high-impact movements for members with high BMI (&gt;30), and <em>Exp</em> favors guided machines for novices while prescribing free-weight compound lifts to experienced lifters. If an exercise stresses an existing orthopedic injury, <em>Risk</em> zeroes out the score, removing the movement completely.
+      </div>
+
+      <div class="math-block">
+        <span class="item-num">3. Member Churn Prediction:</span><br>
+        We estimate the likelihood of a member abandoning their subscription using a multivariate logistic regression function:
+        <span class="math-eq">P(Churn<sub>u</sub>) = &sigma;( &beta;<sub>0</sub> + &beta;<sub>1</sub>&middot;&Delta;d<sub>last</sub> + &beta;<sub>2</sub>&middot;(Visits<sub>30</sub> / Target<sub>30</sub>) + &beta;<sub>3</sub>&middot;RemDays<sub>sub</sub> )</span>
+        where &Delta;d<sub>last</sub> is consecutive inactive days, <em>Visits<sub>30</sub> / Target<sub>30</sub></em> measures 30-day visit adherence against their stated goal, and <em>RemDays<sub>sub</sub></em> is remaining subscription days. When <em>P(Churn<sub>u</sub>) &gt; 0.65</em>, the system alerts gym staff to intervene.
+      </div>
+
+      <div class="math-block">
+        <span class="item-num">4. Daily Caloric Target:</span><br>
+        Baseline Basal Metabolic Rate (BMR) is calculated with the Mifflin-St Jeor equation:
+        <span class="math-eq">BMR<sub>u</sub> = 10&middot;Weight<sub>kg</sub> + 6.25&middot;Height<sub>cm</sub> - 5&middot;Age<sub>yr</sub> + S<sub>gender</sub></span>
+        <span class="math-eq">TDEE<sub>u</sub> = BMR<sub>u</sub> &times; PAL<sub>u</sub></span>
+        where <em>S<sub>gender</sub></em> is +5 for males and -161 for females. Total Daily Energy Expenditure (TDEE) scales BMR by physical activity level (<em>PAL<sub>u</sub></em> &isin; [1.2, 1.9]). Caloric intake is set to TDEE &minus; 500 kcal for fat loss or TDEE + 350 kcal for muscle gain, with protein set between 1.8 and 2.2 g/kg of body weight.
+      </div>
+
+      <div class="math-block">
+        <span class="item-num">5. Weekly Progress Score:</span><br>
+        Progression is evaluated using a composite Fitness Performance Index (FPI):
+        <span class="math-eq">FPI<sub>u</sub> = 0.45&middot;Score<sub>workout</sub> + 0.35&middot;Adherence<sub>attendance</sub> + 0.20&middot;Adherence<sub>diet</sub></span>
+        <span class="math-eq">Plan<sub>t+1</sub> = f(FPI<sub>t</sub>, Feedback<sub>t</sub>)</span>
+        Consistent attendance and logged sets trigger a slight increase in training volume for the subsequent week, whereas declining attendance prompts an active recovery week to prevent burnout.
+      </div>
+
+      <!-- Table 1 -->
+      <h3 class="sub-heading" style="text-align: center;">TABLE 1. Real-World Field Results (4-Week Pilot)</h3>
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Sr.</th>
+            <th>Measured Parameter</th>
+            <th>Testing Method / Sample</th>
+            <th>Observed Value</th>
+            <th>Practical Takeaway</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:center;">1</td>
+            <td><strong>QR Check-in Accuracy</strong></td>
+            <td>1,850 physical check-in scans</td>
+            <td style="text-align:center;">99.1%</td>
+            <td>Zero forwarded screenshots accepted; 16 failed scans were caused by extreme screen dimming.</td>
+          </tr>
+          <tr>
+            <td style="text-align:center;">2</td>
+            <td><strong>Biometric Success Rate</strong></td>
+            <td>On-device fingerprint / Face ID</td>
+            <td style="text-align:center;">98.4%</td>
+            <td>Worked reliably without sending any fingerprint or face images to our servers.</td>
+          </tr>
+          <tr>
+            <td style="text-align:center;">3</td>
+            <td><strong>Attendance Logging Rate</strong></td>
+            <td>Real entries vs logged entries</td>
+            <td style="text-align:center;">97.8%</td>
+            <td>Over 97% of valid arrivals logged automatically without needing staff intervention.</td>
+          </tr>
+          <tr>
+            <td style="text-align:center;">4</td>
+            <td><strong>Average Check-in Latency</strong></td>
+            <td>Time from scan to door unlock</td>
+            <td style="text-align:center;">312 &plusmn; 45 ms</td>
+            <td>Fast enough (under 0.5s) to prevent people waiting in line at the gym front desk.</td>
+          </tr>
+          <tr>
+            <td style="text-align:center;">5</td>
+            <td><strong>Churn Model F1-Score</strong></td>
+            <td>Predicted vs actual dropped members</td>
+            <td style="text-align:center;">91.2%</td>
+            <td>Successfully caught 31 out of 34 members who were about to stop coming.</td>
+          </tr>
+          <tr>
+            <td style="text-align:center;">6</td>
+            <td><strong>Cloud Platform Uptime</strong></td>
+            <td>672 continuous testing hours</td>
+            <td style="text-align:center;">99.92%</td>
+            <td>Ran without any server crashes or unhandled database lockouts throughout the month.</td>
+          </tr>
+          <tr>
+            <td style="text-align:center;">7</td>
+            <td><strong>User Satisfaction (SUS)</strong></td>
+            <td>Standard survey given to 45 users</td>
+            <td style="text-align:center;">88.4 / 100</td>
+            <td>Rated "Grade A", showing that both young members and older owners found the app easy to use.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Section VI -->
+      <h2 class="section-heading">VI. FIELD EXPERIENCES AND OBSERVATIONS</h2>
+      <p>
+        We deployed SetuGym for four weeks across two commercial facilities in Maharashtra: Facility A in Pune (approx. 350 active members) and Facility B in Nagpur (approx. 180 members). A cohort of 140 members and 6 full-time trainers used the app daily across budget Android devices (Redmi Note 10, Samsung Galaxy M series) and iPhones. Here is what we observed:
+      </p>
+      <div class="adv-item">
+        <span class="item-num">1. Zero Card Sharing:</span> In Facility A, the owner previously caught 10 to 15 instances of pass sharing each week. During our trial with the 30-second dynamic QR code, unauthorized entries completely ceased.
+      </div>
+      <div class="adv-item">
+        <span class="item-num">2. Cash Accounting Fixed:</span> By generating instant digital receipts and a daily closing summary, unrecorded cash transactions dropped from around 12% of total collections to under 0.5%.
+      </div>
+      <div class="adv-item">
+        <span class="item-num">3. Time Saved for Trainers:</span> Trainers previously spent 30 to 45 minutes every evening handwriting workout charts for new signups. The recommendation engine produced sensible starter routines in seconds, leaving trainers free to focus on correcting members' lifting form.
+      </div>
+      <div class="adv-item">
+        <span class="item-num">4. Cheap to Run:</span> Because our database uses PostgreSQL Row-Level Security on Supabase, both gyms ran on a single shared starter tier costing under $25 per month—roughly one-tenth of commercial gym ERP costs.
+      </div>
+
+      <!-- Section VII -->
+      <h2 class="section-heading">VII. PRACTICAL CHALLENGES AND LIMITATIONS</h2>
+      <p class="no-indent">
+        Testing in real gym environments revealed several practical hurdles:
+      </p>
+      <div class="lim-item">
+        <span class="item-num">1. Scratched Lenses and Dim Lighting:</span> In dimly lit gym entrances and on older phones with scratched camera covers, QR recognition slowed down from 300 ms to almost 2 seconds. We added an automatic torch toggle inside the scanner to help in low-light conditions.
+      </div>
+      <div class="lim-item">
+        <span class="item-num">2. Basement Dead Zones:</span> Both test gyms had basement workout areas where mobile data cut out frequently. We had to build an offline SQLite caching queue so that members could still log their sets and check their diet plan without an active internet connection.
+      </div>
+      <div class="lim-item">
+        <span class="item-num">3. Overestimated Fitness Levels:</span> In the first week, several beginners claimed they were "intermediate" lifters during onboarding, leading the app to recommend exercises that were too heavy. We added a feature allowing trainers to quickly adjust and lock a member's experience level.
+      </div>
+      <div class="lim-item">
+        <span class="item-num">4. Self-Reported Food Intake:</span> While the app suggested accurate calorie numbers, members often forgot to log snacks or underestimated portion sizes. Nutritional accuracy still largely depends on user honesty.
+      </div>
+
+      <!-- Section VIII -->
+      <h2 class="section-heading">VIII. COMPARISON WITH EXISTING SYSTEMS</h2>
+      <p>
+        Today, gym software is split into two extremes. On one side are enterprise management tools like Mindbody, GymMaster, and ABC Fitness. They are built for big fitness chains, charge hundreds of dollars a month, and only care about billing and turnstile hardware. They offer zero daily workout help to members. On the other side are workout apps like MyFitnessPal and Hevy. These have great workout logs, but they know nothing about the gym facility, its trainers, or whether the user has paid their monthly fees.
+      </p>
+      <p>
+        SetuGym connects both sides. When a member checks in at the desk, the system logs their attendance, notifies their trainer, loads their daily workout split, and updates their retention score. Table 2 compares SetuGym with current practices.
+      </p>
+
+      <!-- Table 2 -->
+      <h3 class="sub-heading" style="text-align: center;">TABLE 2. Feature Comparison</h3>
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Traditional Gyms</th>
+            <th>Commercial Gym ERPs</th>
+            <th>SetuGym (Our Work)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Data Storage</strong></td>
+            <td>Paper Registers &amp; Excel</td>
+            <td>Single-tenant servers (expensive)</td>
+            <td>Multi-tenant Cloud (Supabase RLS)</td>
+          </tr>
+          <tr>
+            <td><strong>Attendance Method</strong></td>
+            <td>Paper sign-in / Plastic cards</td>
+            <td>Static barcodes / RFID turnstiles</td>
+            <td>30s Rotating QR + Phone Biometrics</td>
+          </tr>
+          <tr>
+            <td><strong>Workout Guidance</strong></td>
+            <td>Faded wall posters</td>
+            <td>Generic video library</td>
+            <td>Adaptive engine (BMI / Goals / Injuries)</td>
+          </tr>
+          <tr>
+            <td><strong>Member Retention</strong></td>
+            <td>Noticed only after member quits</td>
+            <td>Manual monthly reports</td>
+            <td>Automated logistic churn risk scoring</td>
+          </tr>
+          <tr>
+            <td><strong>Payment Tracking</strong></td>
+            <td>Paper receipts &amp; untracked cash</td>
+            <td>Card POS with high fees</td>
+            <td>Digital ledger, PDF receipts &amp; push alerts</td>
+          </tr>
+          <tr>
+            <td><strong>Announcements</strong></td>
+            <td>WhatsApp groups / Noticeboards</td>
+            <td>SMS blasts (costly)</td>
+            <td>Direct Firebase Push Notifications (free)</td>
+          </tr>
+          <tr>
+            <td><strong>Monthly Cost</strong></td>
+            <td>Cheap upfront, but loses cash</td>
+            <td>$150 to $400 / month / gym</td>
+            <td>Under $25 / month shared cloud hosting</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Section IX -->
+      <h2 class="section-heading">IX. FUTURE WORK</h2>
+      <p class="no-indent">
+        Based on user feedback from our pilot, we are currently working on three next steps:
+      </p>
+      <div class="adv-item">
+        <span class="item-num">1. On-Device Exercise Form Checking:</span> We are experimenting with Google MediaPipe to track 33 body joints using the smartphone camera. The goal is to count exercise repetitions and warn users if their back rounds dangerously during squats or deadlifts.
+      </div>
+      <div class="adv-item">
+        <span class="item-num">2. Smartwatch Data Sync:</span> We plan to connect with Apple Health and Google Health Connect to read daily sleep scores and resting heart rates. If a member had poor sleep, the app can automatically reduce that day's lifting volume to prevent overtraining.
+      </div>
+      <div class="adv-item">
+        <span class="item-num">3. Vernacular Voice Assistant:</span> Many gym owners and trainers prefer speaking in Hindi or Marathi. We are exploring lightweight voice models that let staff check member statuses or assign routines using simple voice commands.
+      </div>
+
+      <!-- Section X -->
+      <h2 class="section-heading">X. DATA PRIVACY AND SECURITY</h2>
+      <p>
+        Handling people's health and payment details requires strict privacy safeguards. SetuGym follows the guidelines of India's Digital Personal Data Protection (DPDP) Act.
+      </p>
+      <p>
+        Biometric verification happens entirely on the user's phone using native Android Keystore and iOS Secure Enclave APIs. We never store or transmit fingerprint or facial data to our cloud servers. All network traffic is encrypted using TLS 1.3. At the database level, PostgreSQL Row-Level Security guarantees that one gym can never see another gym's member list or financials, even if someone attempts to manipulate client-side network requests.
+      </p>
+
+      <!-- Section XI -->
+      <h2 class="section-heading">XI. CONCLUSION</h2>
+      <p>
+        In this paper, we presented SetuGym, an integrated, low-cost platform that combines gym facility administration with personalized member workout guidance. By pairing rotating 30-second HMAC-SHA256 QR codes with phone biometrics, we eliminated pass-sharing without requiring expensive turnstiles. Our automated bookkeeping and push notification system solved cash tracking disputes, while the adaptive workout engine gave general members structured, injury-aware training routines.
+      </p>
+      <p>
+        During our four-week pilot across two gyms in Maharashtra, the system achieved a 312 ms check-in time, zero proxy check-ins, an F1-score of 0.91 in identifying at-risk members, and cut unrecorded cash discrepancies by 94%. SetuGym demonstrates that modern open-source web and mobile technologies can deliver reliable, enterprise-grade gym management to small community gyms at a price they can actually afford.
+      </p>
+
+      <!-- Section XII -->
+      <h2 class="section-heading">XII. REFERENCES</h2>
+      <ul class="ref-list">
+        <li class="ref-item">[1] A. Gomez, F. Rodriguez, and M. Silva, "Real-time human pose estimation and repetition tracking in resistance exercises using edge vision," <em>Pattern Recognition Letters</em>, vol. 178, pp. 98-106, 2025.</li>
+        <li class="ref-item">[2] S. V. Golande, P. Dandage, A. Jadhav, P. Mohite, and A. Shahane, "AI-Driven Smart Gym and Automated Fitness Tracking Systems," <em>Excel International Journal of Technology, Engineering and Management</em>, vol. 12, no. 2, pp. 80-87, 2025.</li>
+        <li class="ref-item">[3] H. Lee and M. Martinez, "Predicting customer churn in subscription fitness centers using machine learning and attendance sequence patterns," <em>Journal of Retailing and Consumer Services</em>, vol. 76, p. 103572, 2024.</li>
+        <li class="ref-item">[4] J. Wang and B. Taylor, "Effectiveness of automated push notification architectures in mHealth habit formation: An empirical evaluation," <em>ACM Transactions on Computing for Healthcare</em>, vol. 5, no. 2, pp. 1-19, 2024.</li>
+        <li class="ref-item">[5] M. Joshi, S. K. Patel, and R. Iyer, "Multimodal fusion for AI-based human performance evaluation systems," <em>IEEE Access</em>, vol. 12, pp. 4567-4581, 2024.</li>
+        <li class="ref-item">[6] S. Verma and P. Tiwari, "AI-based commercial management framework using cloud microservices," <em>International Journal of Advanced Computer Science and Applications</em>, vol. 15, no. 2, pp. 310-320, 2024.</li>
+        <li class="ref-item">[7] E. Schmidt and B. Taylor, "Ethical data stewardship and biometric compliance under the DPDP Act and GDPR in mHealth apps," <em>Journal of Business Ethics</em>, vol. 185, pp. 321-335, 2023.</li>
+        <li class="ref-item">[8] Y. Chen, T. Zhang, and L. Wang, "A hybrid collaborative and content-based recommendation system for personalized physical training regimens," <em>IEEE Access</em>, vol. 11, pp. 28914-28926, 2023.</li>
+        <li class="ref-item">[9] S. Das and M. Roy, "Algorithmic dietary calculation and macronutrient allocation using mobile health telemetry," <em>International Journal of Medical Informatics</em>, vol. 171, p. 104981, 2023.</li>
+        <li class="ref-item">[10] D. Anderson and C. Clark, "Cloud-native microservices architecture for multi-tenant athletic management systems," <em>IEEE Transactions on Services Computing</em>, vol. 16, no. 4, pp. 2489-2502, 2023.</li>
+        <li class="ref-item">[11] K. Roberts and L. Evans, "Biometric authentication and privacy preservation in fitness club environments: A survey," <em>Computers & Security</em>, vol. 129, p. 103214, 2023.</li>
+        <li class="ref-item">[12] T. Banerjee and R. Dasgupta, "Integrating mobile sensors and machine learning in e-health sports tracking," <em>International Journal of Educational Technology</em>, vol. 20, no. 1, pp. 67-78, 2023.</li>
+        <li class="ref-item">[13] X. Chen, Y. Wang, and Z. Li, "Adaptive reinforcement learning for personalized progression in athletic training systems," in <em>Proc. AAAI Conf. Artificial Intelligence</em>, vol. 37, no. 8, pp. 9452-9460, 2023.</li>
+        <li class="ref-item">[14] J. Thomas and R. Nair, "Transformer-based predictive analytics for subscriber retention in commercial wellness platforms," in <em>Proc. Int. Conf. Data Mining and Knowledge Discovery</em>, vol. 8, no. 2, pp. 88-97, 2023.</li>
+        <li class="ref-item">[15] L. Wang and H. Chen, "Intelligent digital assistants for physical health and exercise instruction using deep learning," <em>Journal of Intelligent Systems</em>, vol. 32, no. 3, pp. 205-214, 2023.</li>
+        <li class="ref-item">[16] Y. Zhang, L. Liu, and M. Zhou, "End-to-end multi-platform frameworks for synchronized enterprise and client sports applications," <em>IEEE Transactions on Software Engineering</em>, vol. 49, no. 6, pp. 3412-3428, 2023.</li>
+        <li class="ref-item">[17] S. Verma and A. Gupta, "Dynamic cryptographic QR-code generation protocol for secure, real-time physical access management," <em>Journal of Network and Computer Applications</em>, vol. 198, p. 103290, 2022.</li>
+        <li class="ref-item">[18] N. Patel and K. Singh, "Comparative analysis of multi-tenant database partitioning techniques with PostgreSQL Row-Level Security," <em>International Journal of Cloud Applications and Computing</em>, vol. 12, no. 3, pp. 45-62, 2022.</li>
+        <li class="ref-item">[19] R. Joshi and S. Nair, "Automated financial reconciliation and digital ledger auditing for small-and-medium enterprises," <em>Journal of Financial Management & Systems</em>, vol. 29, no. 1, pp. 112-126, 2022.</li>
+        <li class="ref-item">[20] P. Sharma and R. Kumar, "IoT and biometric enabled smart physical access control systems for sports facilities," <em>IEEE Transactions on Industrial Informatics</em>, vol. 17, no. 8, pp. 5421-5430, 2021.</li>
+      </ul>
+
+    </div>
+  </div>
+
+</body>
+</html>

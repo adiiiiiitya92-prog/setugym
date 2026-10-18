@@ -1,0 +1,5 @@
+import { MOCK_SUBSCRIPTION_PLANS } from './mockData';
+
+export const PLATFORM_PLANS = MOCK_SUBSCRIPTION_PLANS;
+
+export const DEFAULT_TRIAL_DURATION_DAYS = 7;
