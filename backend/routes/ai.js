@@ -2,8 +2,16 @@ const express = require('express');
 const router = express.Router();
 require('dotenv').config();
 
+const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || '').trim();
+const GEMINI_CANDIDATE_MODELS = [
+  'gemini-3.8-flash',
+  'gemini-3.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-flash-latest'
+];
+
 const GROQ_API_KEY = (process.env.GROQ_API_KEY || '').trim();
-const GROQ_MODEL = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 
 /**
  * Calculate age helper
@@ -92,82 +100,105 @@ ${profileSection}
 router.post('/chat', async (req, res) => {
   try {
     const { messages = [], memberProfile = {}, userRole = 'member', customPrompt } = req.body;
-
-    const apiKey = GROQ_API_KEY || (process.env.GROQ_API_KEY || '').trim();
-    if (!apiKey) {
-      return res.status(500).json({
-        error: 'GROQ_API_KEY is not configured in backend environment.'
-      });
-    }
-
     const systemPrompt = customPrompt || buildSystemPrompt(memberProfile, userRole);
 
-    // Prepare conversation messages for Groq OpenAI-compatible format
-    const groqMessages = [
-      { role: 'system', content: systemPrompt },
-      ...messages.map(m => ({
-        role: m.role === 'assistant' ? 'assistant' : 'user',
-        content: String(m.content || '')
-      }))
-    ];
+    // 1. Primary: Google Gemini AI
+    if (GEMINI_API_KEY) {
+      const contents = messages.map(m => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: String(m.content || '') }]
+      }));
 
-    const candidateModels = [
-      GROQ_MODEL,
-      'openai/gpt-oss-120b',
-      'openai/gpt-oss-20b',
-      'qwen/qwen3.8-27b'
-    ].filter((v, i, a) => a.indexOf(v) === i); // unique
+      for (const model of GEMINI_CANDIDATE_MODELS) {
+        try {
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+          const response = await fetch(geminiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              system_instruction: { parts: [{ text: systemPrompt }] },
+              contents,
+              generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 1024
+              }
+            })
+          });
 
-    let data = null;
-    let lastError = null;
-
-    for (const model of candidateModels) {
-      try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model,
-            messages: groqMessages,
-            temperature: 0.7,
-            max_tokens: 800
-          })
-        });
-
-        const json = await response.json();
-        if (response.ok && json.choices?.[0]?.message?.content) {
-          data = json;
-          break;
-        } else {
-          lastError = json.error?.message || `Model ${model} returned ${response.status}`;
-          console.warn(`[Groq AI] Model ${model} failed, trying next candidate:`, lastError);
+          if (response.ok) {
+            const json = await response.json();
+            const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) {
+              return res.json({
+                success: true,
+                message: {
+                  role: 'assistant',
+                  content: text
+                },
+                model: model,
+                provider: 'Google Gemini'
+              });
+            }
+          }
+        } catch (err) {
+          console.warn(`[Backend Gemini] Model ${model} call failed, trying next:`, err.message);
         }
-      } catch (e) {
-        lastError = e.message;
-        console.warn(`[Groq AI] Error with model ${model}:`, e.message);
       }
     }
 
-    if (!data) {
-      return res.status(500).json({
-        error: lastError || 'Failed to generate response from Groq AI',
-        details: lastError
-      });
+    // 2. Secondary: Groq Fallback
+    const groqKey = GROQ_API_KEY || (process.env.GROQ_API_KEY || '').trim();
+    if (groqKey) {
+      const groqMessages = [
+        { role: 'system', content: systemPrompt },
+        ...messages.map(m => ({
+          role: m.role === 'assistant' ? 'assistant' : 'user',
+          content: String(m.content || '')
+        }))
+      ];
+
+      const candidateModels = [
+        GROQ_MODEL,
+        'openai/gpt-oss-120b',
+        'qwen/qwen3.8-27b'
+      ];
+
+      for (const model of candidateModels) {
+        try {
+          const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${groqKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model,
+              messages: groqMessages,
+              temperature: 0.7,
+              max_tokens: 800
+            })
+          });
+
+          const json = await response.json();
+          if (response.ok && json.choices?.[0]?.message?.content) {
+            return res.json({
+              success: true,
+              message: {
+                role: 'assistant',
+                content: json.choices[0].message.content
+              },
+              model: data.model || GROQ_MODEL,
+              provider: 'Groq'
+            });
+          }
+        } catch (e) {
+          console.warn(`[Backend Groq] Model ${model} failed:`, e.message);
+        }
+      }
     }
 
-    const reply = data.choices?.[0]?.message?.content || "I couldn't generate a response. Please try again.";
-
-    res.json({
-      success: true,
-      message: {
-        role: 'assistant',
-        content: reply
-      },
-      model: data.model || GROQ_MODEL,
-      usage: data.usage
+    return res.status(500).json({
+      error: 'Failed to generate response from both Gemini and Groq AI engines.'
     });
   } catch (err) {
     console.error('[AI Chat Endpoint Error]:', err);

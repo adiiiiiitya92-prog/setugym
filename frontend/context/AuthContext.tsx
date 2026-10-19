@@ -1,8 +1,14 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as LocalAuthentication from 'expo-local-authentication';
 import { GymOwner } from '../types';
 import { supabase } from '../utils/supabase';
+
+// expo-local-authentication is native-only; lazy-load to avoid web crashes
+let LocalAuthentication: typeof import('expo-local-authentication') | null = null;
+if (Platform.OS !== 'web') {
+  LocalAuthentication = require('expo-local-authentication');
+}
 
 export type UserRole = 'super-admin' | 'gym-owner' | 'trainer' | 'member';
 
@@ -62,10 +68,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setBiometricsState(storedBioPref === 'true');
         }
 
-        // Check hardware status
-        const hasHardware = await LocalAuthentication.hasHardwareAsync();
-        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-        setHasBiometricsHardware(hasHardware && isEnrolled);
+        // Check hardware status (native only)
+        if (Platform.OS !== 'web' && LocalAuthentication) {
+          const hasHardware = await LocalAuthentication.hasHardwareAsync();
+          const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+          setHasBiometricsHardware(hasHardware && isEnrolled);
+        }
       } catch (e) {
         console.error("Failed to load session details", e);
       } finally {
@@ -252,7 +260,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const authenticateWithBiometrics = async (): Promise<{ success: boolean; error?: string }> => {
-    if (!hasBiometricsHardware || !biometricsEnabled) {
+    if (!hasBiometricsHardware || !biometricsEnabled || Platform.OS === 'web' || !LocalAuthentication) {
       return { success: false, error: "Biometric login is disabled or not available." };
     }
 

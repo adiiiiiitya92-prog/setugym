@@ -24,7 +24,17 @@ export interface MemberProfileContext {
   notes?: string;
 }
 
-const DIRECT_GROQ_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY || "";
+// Gemini AI Credentials & Candidate Models (Fast & High-Intelligence)
+const DIRECT_GEMINI_KEY = (process.env.EXPO_PUBLIC_GEMINI_API_KEY || "").trim();
+const GEMINI_CANDIDATE_MODELS = [
+  "gemini-3.8-flash",
+  "gemini-3.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-flash-latest"
+];
+
+// Fallback Groq credentials
+const DIRECT_GROQ_KEY = (process.env.EXPO_PUBLIC_GROQ_API_KEY || "").trim();
 const GROQ_MODEL = "openai/gpt-oss-120b";
 
 /**
@@ -61,7 +71,7 @@ export function extractMemberProfileContext(member?: Member | null, planName?: s
 }
 
 /**
- * Helper to construct direct client prompt if backend fallback is triggered
+ * Helper to construct direct client prompt based on role and physical parameters
  */
 function buildClientSystemPrompt(profile: MemberProfileContext, userRole: 'member' | 'trainer'): string {
   const bmiText = profile.bmi ? `${profile.bmi}` : 'Not measured';
@@ -75,7 +85,7 @@ Assisting personal trainer with client: ${profile.name}, Gender: ${profile.gende
 Provide trainer-grade workout splits, periodization, sets/reps, RPE, rest times, and coaching cues tailored to these stats.`;
   }
 
-  return `You are "Setu Coach", a friendly and motivating AI Personal Trainer on the SetuGym platform.
+  return `You are "Setu Coach", an energetic, motivating, and science-backed AI Personal Trainer on the SetuGym platform.
 You are coaching member: ${profile.name}, Gender: ${profile.gender}, Weight: ${weightText}, Height: ${heightText}, BMI: ${bmiText}, Measurements: ${measurements}.
 Directives:
 1. Tailor every workout recommendation, exercise selection, intensity, and recovery advice to their BMI, weight, and body measurements.
@@ -85,19 +95,97 @@ Directives:
 }
 
 /**
- * Send chat message to AI
+ * Direct Gemini API Generator with multi-model fallback
+ */
+async function callDirectGemini(
+  messages: ChatMessage[],
+  systemPrompt: string
+): Promise<string> {
+  if (!DIRECT_GEMINI_KEY) {
+    throw new Error('Gemini API key is not configured.');
+  }
+
+  // Map messages to Gemini contents structure
+  const contents = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }));
+
+  let lastErr = '';
+
+  for (const model of GEMINI_CANDIDATE_MODELS) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${DIRECT_GEMINI_KEY}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 14000);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemPrompt }]
+          },
+          contents,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1024
+          }
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}));
+        lastErr = errJson.error?.message || `Model ${model} returned HTTP ${response.status}`;
+        console.warn(`[Gemini AI] Model ${model} failed, trying next candidate:`, lastErr);
+        continue;
+      }
+
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text && text.trim().length > 0) {
+        return text;
+      }
+    } catch (e: any) {
+      lastErr = e.message || String(e);
+      console.warn(`[Gemini AI] Network issue with model ${model}:`, lastErr);
+    }
+  }
+
+  throw new Error(lastErr || 'All Gemini models failed to generate content.');
+}
+
+/**
+ * Send chat message to AI (Gemini primary -> Backend secondary -> Groq tertiary)
  */
 export async function sendWorkoutChatMessage(
   messages: ChatMessage[],
   profile: MemberProfileContext,
   userRole: 'member' | 'trainer' = 'member'
 ): Promise<string> {
+  const systemPrompt = buildClientSystemPrompt(profile, userRole);
+
+  // 1. Primary: Direct Google Gemini API (Instant, standalone on device without backend dependency)
+  try {
+    const geminiReply = await callDirectGemini(messages, systemPrompt);
+    if (geminiReply) {
+      return geminiReply;
+    }
+  } catch (err: any) {
+    console.warn('[AI Service] Direct Gemini call failed, attempting backend endpoint:', err?.message || err);
+  }
+
+  // 2. Secondary: Try Backend Express API
   const payloadMessages = messages.map(m => ({
     role: m.role,
     content: m.content
   }));
 
-  // 1. Try Backend Express API first
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000);
@@ -123,42 +211,42 @@ export async function sendWorkoutChatMessage(
         return data.message.content;
       }
     }
-    console.warn('[AI Service] Backend call returned non-OK or empty, initiating direct Groq fallback');
+    console.warn('[AI Service] Backend call returned non-OK or empty, initiating Groq fallback');
   } catch (err) {
-    console.warn('[AI Service] Backend call failed/timed out, switching to direct Groq fallback:', err);
+    console.warn('[AI Service] Backend call failed/timed out, switching to Groq fallback:', err);
   }
 
-  // 2. Direct Groq API Fallback (Guarantees responsiveness even in offline backend or device networking issues)
-  try {
-    const systemPrompt = buildClientSystemPrompt(profile, userRole);
-    const groqMessages = [
-      { role: 'system', content: systemPrompt },
-      ...payloadMessages
-    ];
+  // 3. Tertiary: Direct Groq API Fallback if key available
+  if (DIRECT_GROQ_KEY) {
+    try {
+      const groqMessages = [
+        { role: 'system', content: systemPrompt },
+        ...payloadMessages
+      ];
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${DIRECT_GROQ_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: groqMessages,
-        temperature: 0.7,
-        max_tokens: 1024
-      })
-    });
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${DIRECT_GROQ_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: groqMessages,
+          temperature: 0.7,
+          max_tokens: 1024
+        })
+      });
 
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error?.message || `Groq API responded with status ${response.status}`);
+      if (response.ok) {
+        const data = await response.json();
+        const reply = data.choices?.[0]?.message?.content;
+        if (reply) return reply;
+      }
+    } catch (err) {
+      console.warn('[AI Service] Groq fallback failed:', err);
     }
-
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content || "I couldn't generate a workout recommendation right now. Please try again.";
-  } catch (err: any) {
-    console.error('[AI Service] Both backend and direct Groq calls failed:', err);
-    throw new Error(err.message || 'Unable to connect to AI Coach. Please check your internet connection.');
   }
+
+  throw new Error('Unable to connect to Setu AI Coach. Please check your internet connection and try again.');
 }
