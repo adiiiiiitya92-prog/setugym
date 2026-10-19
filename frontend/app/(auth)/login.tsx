@@ -260,7 +260,7 @@ export default function LoginScreen() {
               >
                 <View className="w-2.5 h-2.5 rounded-full bg-accent mr-2" />
                 <View>
-                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Super Admin</Text>
+                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Vikramaditya S.</Text>
                   <Text style={{ color: colors.textSecondary }} className="text-[9px]">admin@gymapp.com</Text>
                 </View>
               </TouchableOpacity>
@@ -272,7 +272,7 @@ export default function LoginScreen() {
               >
                 <View className="w-2.5 h-2.5 rounded-full bg-primary mr-2" />
                 <View>
-                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Gym Owner</Text>
+                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Rajesh Singhania</Text>
                   <Text style={{ color: colors.textSecondary }} className="text-[9px]">owner@fitzone.com</Text>
                 </View>
               </TouchableOpacity>
@@ -284,7 +284,7 @@ export default function LoginScreen() {
               >
                 <View className="w-2.5 h-2.5 rounded-full bg-secondary mr-2" />
                 <View>
-                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Trainer</Text>
+                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Vikram Rathore</Text>
                   <Text style={{ color: colors.textSecondary }} className="text-[9px]">trainer@fitzone.com</Text>
                 </View>
               </TouchableOpacity>
@@ -296,7 +296,7 @@ export default function LoginScreen() {
               >
                 <View className="w-2.5 h-2.5 rounded-full bg-gray-500 mr-2" />
                 <View>
-                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Gym Member</Text>
+                  <Text style={{ color: colors.text }} className="text-[11px] font-bold">Arjun Mehta</Text>
                   <Text style={{ color: colors.textSecondary }} className="text-[9px]">john@member.com</Text>
                 </View>
               </TouchableOpacity>

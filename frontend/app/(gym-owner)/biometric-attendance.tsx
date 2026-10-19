@@ -28,13 +28,13 @@ export default function BiometricAttendanceScreen() {
   const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [syncing, setSyncing] = useState(false);
   const [logs, setLogs] = useState([
-    { id: 'bio-1', name: 'John Doe', time: '09:15 AM', date: format(new Date(), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-01' },
-    { id: 'bio-2', name: 'Jane Smith', time: '10:30 AM', date: format(new Date(), "yyyy-MM-dd"), direction: 'OUT', deviceId: 'ZKTeco-02' },
-    { id: 'bio-3', name: 'Robert Johnson', time: '11:02 AM', date: format(new Date(), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-01' },
-    { id: 'bio-4', name: 'Alice Brown', time: '08:45 AM', date: format(subDays(new Date(), 1), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-01' },
-    { id: 'bio-5', name: 'David Wilson', time: '05:30 PM', date: format(subDays(new Date(), 1), "yyyy-MM-dd"), direction: 'OUT', deviceId: 'ZKTeco-02' },
-    { id: 'bio-6', name: 'Chris Evans', time: '09:00 AM', date: format(subDays(new Date(), 2), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-01' },
-    { id: 'bio-7', name: 'Emma Watson', time: '07:15 AM', date: format(subDays(new Date(), 3), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-02' },
+    { id: 'bio-1', name: 'Arjun Mehta', time: '06:15 AM', date: format(new Date(), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-Nagpur-01' },
+    { id: 'bio-2', name: 'Sneha Kulkarni', time: '07:30 AM', date: format(new Date(), "yyyy-MM-dd"), direction: 'OUT', deviceId: 'ZKTeco-Nagpur-02' },
+    { id: 'bio-3', name: 'Rohan Verma', time: '08:02 AM', date: format(new Date(), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-Nagpur-01' },
+    { id: 'bio-4', name: 'Priya Sharma', time: '06:45 AM', date: format(subDays(new Date(), 1), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-Nagpur-01' },
+    { id: 'bio-5', name: 'Amit Patel', time: '07:30 PM', date: format(subDays(new Date(), 1), "yyyy-MM-dd"), direction: 'OUT', deviceId: 'ZKTeco-Nagpur-02' },
+    { id: 'bio-6', name: 'Ananya Iyer', time: '09:00 AM', date: format(subDays(new Date(), 2), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-Nagpur-01' },
+    { id: 'bio-7', name: 'Vikramaditya Patil', time: '07:15 AM', date: format(subDays(new Date(), 3), "yyyy-MM-dd"), direction: 'IN', deviceId: 'ZKTeco-Nagpur-02' },
   ]);
 
   // Quick Date Selectors
@@ -64,10 +64,10 @@ export default function BiometricAttendanceScreen() {
       setSyncing(false);
       
       const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const names = ['Michael Jordan', 'Serena Williams', 'Tom Brady', 'Roger Federer', 'Lionel Messi'];
+      const names = ['Kavita Choudhary', 'Rahul Nair', 'Aditya Mishra', 'Neha Gupta', 'Harpreet Singh'];
       const randomName = names[Math.floor(Math.random() * names.length)];
       const randomDirection = Math.random() > 0.5 ? 'IN' : 'OUT';
-      const randomDevice = Math.random() > 0.5 ? 'ZKTeco-01' : 'ZKTeco-02';
+      const randomDevice = Math.random() > 0.5 ? 'ZKTeco-Nagpur-01' : 'ZKTeco-Nagpur-02';
 
       const newRecord = {
         id: `bio-${Date.now()}`,

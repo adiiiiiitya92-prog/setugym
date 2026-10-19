@@ -35,12 +35,37 @@ export default function TrainerDashboard() {
   }, [attendanceRecords, activeGymId, trainerId]);
 
   // Seed standard upcoming sessions list
-  const sessions: any[] = [];
+  const sessions = useMemo(() => [
+    {
+      id: 'sess-1',
+      name: 'Arjun Mehta',
+      goal: 'Hypertrophy Push Split (Flat Bench & Overhead Lockouts)',
+      time: '06:30 AM'
+    },
+    {
+      id: 'sess-2',
+      name: 'Sneha Kulkarni',
+      goal: 'Core & Functional Mobility Assessment',
+      time: '08:00 AM'
+    },
+    {
+      id: 'sess-3',
+      name: 'Amit Patel',
+      goal: 'Powerlifting Heavy Squats & Form Critique',
+      time: '10:30 AM'
+    },
+    {
+      id: 'sess-4',
+      name: 'Vikramaditya Patil',
+      goal: 'Olympic Clean & Jerk Progression',
+      time: '12:00 PM'
+    }
+  ], []);
 
   const filteredSessions = useMemo(() => {
     if (!searchQuery) return sessions;
-    return sessions.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [searchQuery]);
+    return sessions.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.goal.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [sessions, searchQuery]);
 
   const handleRefresh = () => {
     setRefreshing(true);

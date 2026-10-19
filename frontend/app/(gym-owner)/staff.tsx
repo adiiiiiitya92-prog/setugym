@@ -327,7 +327,7 @@ export default function StaffScreen() {
             <ScrollView showsVerticalScrollIndicator={false}>
               <Input
                 label="Full Name"
-                placeholder="e.g. Mike Ironson"
+                placeholder="e.g. Vikram Rathore"
                 value={name}
                 onChangeText={setName}
                 error={errors.name}

@@ -176,7 +176,7 @@ export default function AddGymOwnerScreen() {
               
               <Input
                 label="Full Name *"
-                placeholder="e.g. John Doe"
+                placeholder="e.g. Rajesh Singhania"
                 value={fullName}
                 onChangeText={setFullName}
                 error={errors.fullName}

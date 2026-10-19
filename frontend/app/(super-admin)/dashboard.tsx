@@ -10,6 +10,7 @@ import { Card } from '../../components/ui/Card';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDate } from '../../utils/dateHelper';
 import { useRouter } from 'expo-router';
+import { subDays } from 'date-fns';
 
 export default function SuperAdminDashboard() {
   const { colors, isDark } = useTheme();
@@ -47,7 +48,32 @@ export default function SuperAdminDashboard() {
 
   // Feed activities compiled from mock elements
   const activities = useMemo(() => {
-    return [] as any[];
+    return [
+      {
+        id: 'act-1',
+        type: 'owner',
+        text: 'Rajesh Singhania onboarded FitZone Studio (Dharampeth, Nagpur)',
+        date: subDays(new Date(), 1).toISOString()
+      },
+      {
+        id: 'act-2',
+        type: 'plan',
+        text: 'Pooja Deshmukh renewed Enterprise Pro (Annual) for Iron Temple Pune',
+        date: subDays(new Date(), 2).toISOString()
+      },
+      {
+        id: 'act-3',
+        type: 'gym',
+        text: 'Tarun Verma started 7-day trial for Cardio Hub Bengaluru',
+        date: subDays(new Date(), 4).toISOString()
+      },
+      {
+        id: 'act-4',
+        type: 'owner',
+        text: 'Jaideep Mukherjee registered MuscleWorld Kolkata on SetuGym',
+        date: subDays(new Date(), 10).toISOString()
+      }
+    ];
   }, []);
 
   // Filter activities based on search query

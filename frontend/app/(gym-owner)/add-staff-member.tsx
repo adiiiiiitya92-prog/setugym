@@ -368,7 +368,7 @@ export default function AddStaffMemberScreen() {
 
               <Input
                 label="Full Name *"
-                placeholder="e.g. John Doe"
+                placeholder="e.g. Vikram Rathore"
                 value={fullName}
                 onChangeText={setFullName}
                 error={errors.fullName}

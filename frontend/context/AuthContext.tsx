@@ -141,14 +141,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (cleanEmail === "admin@gymapp.com" && (cleanPass === "Admin@123" || cleanPass === "admin@123")) {
       authenticatedUser = {
         id: "admin-1",
-        name: "Super Admin",
+        name: "Vikramaditya Sharma",
         email: cleanEmail,
         role: "super-admin"
       };
     } else if (cleanEmail === "owner@fitzone.com" && (cleanPass === "Owner@123" || cleanPass === "owner@123")) {
       authenticatedUser = {
         id: "owner-active-1",
-        name: "Robert Fitfield",
+        name: "Rajesh Singhania",
         email: cleanEmail,
         role: "gym-owner",
         gymIds: ["gym-fitzone-1", "gym-fitzone-2"],
@@ -157,7 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else if (cleanEmail === "trainer@fitzone.com" && (cleanPass === "Trainer@123" || cleanPass === "trainer@123")) {
       authenticatedUser = {
         id: "trainer-1",
-        name: "Mike Ironson",
+        name: "Vikram Rathore",
         email: cleanEmail,
         role: "trainer",
         gymId: "gym-fitzone-1"
@@ -165,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else if (cleanEmail === "john@member.com" && (cleanPass === "Member@123" || cleanPass === "member@123")) {
       authenticatedUser = {
         id: "member-john",
-        name: "John Doe",
+        name: "Arjun Mehta",
         email: cleanEmail,
         role: "member",
         gymId: "gym-fitzone-1"
